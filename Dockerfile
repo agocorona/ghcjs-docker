@@ -9,7 +9,7 @@ RUN curl -sL https://deb.nodesource.com/setup | bash - \
 ENV PATH /root/.cabal/bin:$PATH
 
 RUN cabal update && \
-    cabal install cabal-install-2.0.0.1 Cabal && \
+    cabal install --max-backjumps=-1 cabal-install-2.0.0.1 Cabal-1.24.2.0 && \
     echo $PATH && which cabal && cabal --version && \
     git clone https://github.com/ghcjs/ghcjs.git && \
     cabal install ./ghcjs
