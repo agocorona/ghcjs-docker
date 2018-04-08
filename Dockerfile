@@ -1,7 +1,5 @@
 FROM haskell:7.10.2
 
-
-
 RUN apt-get update \
     && apt-get -y install build-essential git zlib1g-dev libtinfo-dev libgmp-dev autoconf curl
 
