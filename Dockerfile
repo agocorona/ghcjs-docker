@@ -18,4 +18,3 @@ RUN cabal update && \
 
 
 RUN ghcjs-boot --dev
-ENTRYPOINT ["ghcjs"]
