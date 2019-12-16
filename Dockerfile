@@ -1,4 +1,63 @@
-FROM agocorona/ghcjs:8.4
-#RUN cd / && touch .bashrc .cabal .config .ghcjs .profile &&  chmod 777  / && chmod 777 -R .bashrc .cabal .config .ghcjs .profile && cd /root && chmod 777 -R .bashrc .cabal .config .ghcjs .profile
-RUN cd / && mkdir .ghc .bashrc .cabal .config .ghcjs .profile && set - e && chmod -fR 777 / || true
-RUN cabal update && cd /projects/transient && cabal install && cd /projects/transient-universe && cabal install
+
+FROM ubuntu:16.04
+
+
+## ensure locale is set during build
+ENV LANG            C.UTF-8
+
+## Haskell environment
+RUN chmod -R 777 bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  root  run  sbin  srv  tmp  usr  var && \
+    echo 'deb http://ppa.launchpad.net/hvr/ghc/ubuntu xenial main' > \
+      /etc/apt/sources.list.d/ghc.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F6F88286 && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+      cabal-install-2.2 \
+      ghc-8.4.2 \
+      happy-1.19.5 \
+      alex-3.1.7 \
+      zlib1g-dev \
+      libtinfo-dev \
+      libsqlite3-0 \
+      libsqlite3-dev \
+      ca-certificates \
+      build-essential \
+      libgmp-dev \
+      autoconf \
+      automake \
+      curl \
+      g++ \
+      python3 \
+      git
+
+ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/bin:/opt/ghc/8.4.2/bin:/opt/happy/1.19.5/bin:/opt/alex/3.1.7/bin:/opt/ghcjs/.cabal-sandbox/bin:$PATH
+
+## node.js
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+    && apt-get install -y nodejs
+
+
+## build GHCJS
+WORKDIR /
+
+RUN cabal update && \
+    git clone --branch ghc-8.4 https://github.com/ghcjs/ghcjs.git && \
+    cd ghcjs && \
+    git submodule update --init --recursive && \
+    ./utils/makePackages.sh && \
+    ./utils/makeSandbox.sh && \
+    cabal install
+
+ENV PATH /ghcjs/.cabal-sandbox/bin:$PATH
+
+RUN  ghcjs-boot -v2 && \
+    ./utils/makePackages.sh && \
+    ./utils/makeSandbox.sh && cabal install && \
+    chmod 777 -R /
+   
+
+#RUN cd ghcjs && \
+#    ghcjs-boot -v2 && \
+#    ./utils/makePackages.sh && \
+#    ./utils/makeSandbox.sh && cabal install && \
+#    rm -r .cabal-sandbox 
