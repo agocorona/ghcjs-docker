@@ -28,7 +28,8 @@ RUN chmod -R 777 bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  root  r
       curl \
       g++ \
       python3 \
-      git
+      git \
+      netbase
 
 ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/bin:/opt/ghc/8.4.2/bin:/opt/happy/1.19.5/bin:/opt/alex/3.1.7/bin:/opt/ghcjs/.cabal-sandbox/bin:$PATH
 
@@ -50,12 +51,19 @@ RUN cabal update && \
 
 ENV PATH /ghcjs/.cabal-sandbox/bin:$PATH
 
-RUN  ghcjs-boot -v2 && \
-    ./utils/makePackages.sh && \
-    ./utils/makeSandbox.sh && cabal install && \
-    chmod 777 -R /
-   
+RUN  cd / && ghcjs-boot -v2 
 
+RUN  cd / && /ghcjs/utils/makePackages.sh 
+
+RUN  cd / && /ghcjs/utils/makeSandbox.sh && cabal install 
+
+RUN   cd / && chmod 777 -R .cabal .ghc .ghcjs .profile
+   
+#RUN  cd /ghcjs &&  \
+#     ghcjs-boot -v2 && \
+#    ./utils/makePackages.sh && \
+#    ./utils/makeSandbox.sh && cabal install && \
+#    cd / && chmod 777 -R .cabal .ghc .ghcjs .profile
 #RUN cd ghcjs && \
 #    ghcjs-boot -v2 && \
 #    ./utils/makePackages.sh && \
