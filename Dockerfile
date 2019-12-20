@@ -58,7 +58,7 @@ RUN  cd / && /ghcjs/utils/makePackages.sh
 
 RUN  cd / && /ghcjs/utils/makeSandbox.sh && cabal install 
 
-RUN   cd / && chmod 777 -R .cabal .ghc .ghcjs .profile
+RUN   cd /root && chmod 777 -R .cabal .ghc .ghcjs .profile
    
 #RUN  cd /ghcjs &&  \
 #     ghcjs-boot -v2 && \
