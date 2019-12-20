@@ -31,6 +31,7 @@ RUN chmod -R 777 bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  root  r
       git \
       netbase
 
+ENV HOME /root
 ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/bin:/opt/ghc/8.4.2/bin:/opt/happy/1.19.5/bin:/opt/alex/3.1.7/bin:/opt/ghcjs/.cabal-sandbox/bin:$PATH
 
 ## node.js
